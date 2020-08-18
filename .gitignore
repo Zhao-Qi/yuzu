@@ -31,3 +31,4 @@ CMakeSettings.json
 # Windows global filetypes
 Thumbs.db
 
+/src/yuzu/yuzu.aps

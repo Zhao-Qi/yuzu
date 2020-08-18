@@ -52,8 +52,8 @@ const SinkDetails& GetSinkDetails(std::string_view sink_id) {
         std::find_if(std::begin(sink_details), std::end(sink_details),
                      [sink_id](const auto& sink_detail) { return sink_detail.id == sink_id; });
 
-    if (sink_id == "auto" || iter == std::end(sink_details)) {
-        if (sink_id != "auto") {
+    if (sink_id == "自动" || iter == std::end(sink_details)) {
+        if (sink_id != "自动") {
             LOG_ERROR(Audio, "AudioCore::SelectSink given invalid sink_id {}", sink_id);
         }
         // Auto-select.
