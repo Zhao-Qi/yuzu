@@ -197,7 +197,9 @@ void ServerVoiceInfo::UpdateWaveBuffers(
     // Update our wave buffers
     for (std::size_t i = 0; i < AudioCommon::MAX_WAVE_BUFFERS; i++) {
         // Assume that we have at least 1 channel voice state
-        const auto have_valid_wave_buffer = voice_states[0]->is_wave_buffer_valid[i];
+        const auto have_valid_wave_buffer =
+            in_params.channel_count == 0 ? false
+            : voice_states[0]->is_wave_buffer_valid[i];
 
         UpdateWaveBuffer(in_params.wave_buffer[i], voice_in.wave_buffer[i], in_params.sample_format,
                          have_valid_wave_buffer, behavior_info);
@@ -251,8 +253,13 @@ void ServerVoiceInfo::WriteOutStatus(
         voice_out.played_sample_count = 0;
         voice_out.voice_dropped = false;
     } else if (!in_params.is_new) {
-        voice_out.wave_buffer_consumed = voice_states[0]->wave_buffer_consumed;
-        voice_out.played_sample_count = voice_states[0]->played_sample_count;
+        if (voice_in.channel_count == 0) {
+            voice_out.wave_buffer_consumed = 0;
+            voice_out.played_sample_count = 0;
+        } else {
+            voice_out.wave_buffer_consumed = voice_states[0]->wave_buffer_consumed;
+            voice_out.played_sample_count = voice_states[0]->played_sample_count;
+        }
         voice_out.voice_dropped = in_params.voice_drop_flag;
     } else {
         voice_out.wave_buffer_consumed = 0;
@@ -331,7 +338,10 @@ bool ServerVoiceInfo::UpdateParametersForCommandGeneration(
             }
         }
         in_params.should_depop = false;
-        return HasValidWaveBuffer(dsp_voice_states[0]);
+        if (channel_count == 0)
+            return false;
+        else
+            return HasValidWaveBuffer(dsp_voice_states[0]);
     }
     case ServerPlayState::Paused:
     case ServerPlayState::Stop: {
