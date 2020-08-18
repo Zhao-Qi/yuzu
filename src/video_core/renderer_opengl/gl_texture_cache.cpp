@@ -164,7 +164,7 @@ GLenum GetTextureTarget(const SurfaceTarget& target) {
     case SurfaceTarget::TextureCubeArray:
         return GL_TEXTURE_CUBE_MAP_ARRAY;
     }
-    UNREACHABLE();
+    UNREACHABLE_MSG("Invalid SurfaceTarget {}", target);
     return {};
 }
 
@@ -184,7 +184,7 @@ GLint GetSwizzleSource(SwizzleSource source) {
     case SwizzleSource::OneFloat:
         return GL_ONE;
     }
-    UNREACHABLE();
+    UNREACHABLE_MSG("Invalid SwizzleSource {}", source);
     return GL_NONE;
 }
 
